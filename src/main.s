@@ -11,7 +11,7 @@ loop:
 ;;; ======================================================================
 ;;; Part 2, repte 1.1:
 ;;;
-;;; animar un pixel que es mou horitzontalment 4 pixels
+;;; animar un píxel que es mou horitzontalment 4 píxels
 
 p02r11:
     ld hl, #0xc000
@@ -46,6 +46,7 @@ p02r12:
 
 ;;; ----------------------------------------------------------------------
 ;;; subrutina auxiliar que emplena la barra de progrés amb un color
+;;;
 ;;; input:
 ;;; - C: color
 ;;;
@@ -53,7 +54,7 @@ p02r12:
 ;;; cap
 ;;;
 ;;; altera:
-;;; - A, B, C, D, E, HL: en acabar val 0
+;;; - A, B, C, D, E, HL
 ;;; - flag Z: val 1
 
 _p02r12_sub:
@@ -62,21 +63,21 @@ _p02r12_sub:
 _p02r12_sub_loop1:
     ;; el bucle extern es repeteix per cada grup de 4 píxels (1 bytes)
     ld c, e                     ; restaura el color
-    ld d, #0b10001000           ; mascara
+    ld d, #0b10001000           ; màscara
 _p02r12_sub_loop2:
     ;; el bucle intern es repeteix per cada píxel individual dins el
     ;; grup de 4, assignant-li el color
     ld a, d
-    cpl                         ; mascara invertida
-    and (hl)                    ; fica els bits a zero
-    or c                        ; fica els bits de color a 1
-    ld (hl), a                  ; actualitza el pixel
+    cpl                         ; màscara invertida
+    and (hl)                    ; fica els bits del píxel a 0
+    or c                        ; activa els bits del píxel en funció del color
+    ld (hl), a                  ; actualitza el píxel
     ld b, #32
     call wait                   ; espera 32 halts
     srl c                       ; desplaça el color
-    srl d                       ; desplaça la mascara
+    srl d                       ; desplaça la màscara
     ld a, d
-    cp #8                       ; la mascara val: 88 -> 44 -> 22 -> 11 -> 8
+    cp #8                       ; la màscara val: 88 -> 44 -> 22 -> 11 -> 8
                                 ; en 8 cal parar
     jr nz, _p02r12_sub_loop2
     inc l
