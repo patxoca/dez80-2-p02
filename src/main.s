@@ -88,7 +88,7 @@ _p02r12_sub_loop:
 ;;; cap
 ;;;
 ;;; altera:
-;;; - B: en acavar val 0
+;;; - B: en acabar val 0
 ;;; - flag Z: val 1
 
 wait:
