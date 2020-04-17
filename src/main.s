@@ -15,21 +15,16 @@ loop:
 
 p02r11:
     ld hl, #0xc000
-_p02r11_loop:
-    ld (hl), #0x88
-    ld b, #32
+_p02r11_loop_1:
+    ld a, #0x88                 ; patró
+_p02r11_loop_2:
+    ld (hl), a
+    ld b, #32                   ; espera 32 halts, aprox 0.1 seg
     call wait
-    ld (hl), #0x44
-    ld b, #32
-    call wait
-    ld (hl), #0x22
-    ld b, #32
-    call wait
-    ld (hl), #0x11
-    ld b, #32
-    call wait
-    jr _p02r11_loop
-    ret
+    srl a                       ; desplaça patró: 88 -> 44 -> 22 -> 11 -> 8
+    cp #8
+    jr nz, _p02r11_loop_2
+    jr _p02r11_loop_1           ; quan arribem a 8 tornem a 88
 
 
 ;;; ======================================================================
