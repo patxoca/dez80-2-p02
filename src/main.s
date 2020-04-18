@@ -193,25 +193,7 @@ _p02r13_anim:                   ; bucle d'animació
     ret
 
 ;;; ======================================================================
-;;; funcions d'utilitat
-
-;;; ----------------------------------------------------------------------
-;;; wait: espera basada en halt
-;;;
-;;; input:
-;;; - B: nombre de halts que cal executar
-;;;
-;;; output:
-;;; cap
-;;;
-;;; altera:
-;;; - B: en acabar val 0
-;;; - flag Z: val 1
-
-wait:
-    halt
-    djnz wait
-    ret
+;;; data
 
     .area _DATA
 
