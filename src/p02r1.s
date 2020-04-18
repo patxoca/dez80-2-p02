@@ -59,10 +59,10 @@ p02r12::
 _p02r12_sub:
     ld e, c                     ; preserva el color (C)
     ld hl, #0xc000
+    ld d, #0x88                 ; màscara, 0b10001000
 _p02r12_sub_loop1:
     ;; el bucle extern es repeteix per cada grup de 4 píxels (1 bytes)
     ld c, e                     ; restaura el color
-    ld d, #0b10001000           ; màscara
 _p02r12_sub_loop2:
     ;; el bucle intern es repeteix per cada píxel individual dins el
     ;; grup de 4, assignant-li el color
@@ -73,9 +73,9 @@ _p02r12_sub_loop2:
     ld (hl), a                  ; actualitza el píxel
     WAIT #32                    ; espera 32 halts
     srl c                       ; desplaça el color
-    srl d                       ; desplaça la màscara
+    rrc d                       ; desplaça la màscara
     ld a, d
-    cp #8                       ; la màscara val: 88 -> 44 -> 22 -> 11 -> 8
+    cp #0x88                    ; la màscara val: 88 -> 44 -> 22 -> 11 -> 88 ...
                                 ; en 8 cal parar
     jr nz, _p02r12_sub_loop2
     inc l
