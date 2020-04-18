@@ -1,9 +1,10 @@
 
     .include "p02r1.h.s"
+    .include "p02r2.h.s"
 
     .area _CODE
 
 _main::
-    call p02r13
+    call p02r21
 loop:
    jr    loop
