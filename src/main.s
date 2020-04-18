@@ -9,6 +9,32 @@ loop:
    jr    loop
 
 ;;; ======================================================================
+;;; Macros
+
+;;; ----------------------------------------------------------------------
+;;; WAIT: espera basada en halt
+;;;
+;;; input:
+;;; - N: nombre de halts que cal executar
+;;;
+;;; output:
+;;; cap
+;;;
+;;; altera:
+;;; - B: en acabar val 0
+;;; - flag Z: val 1
+;;;
+;;; rationale:
+;;;   utilitzar una funció requereix 5 bytes per preparar el call, la
+;;;   macro requereix 5 bytes.
+;;;
+    .macro WAIT, N
+    ld b, N
+    halt
+    djnz . - 1
+    .endm
+
+;;; ======================================================================
 ;;; Part 2, repte 1.1:
 ;;;
 ;;; animar un píxel que es mou horitzontalment 4 píxels
@@ -19,8 +45,7 @@ _p02r11_loop_1:
     ld a, #0x88                 ; patró
 _p02r11_loop_2:
     ld (hl), a
-    ld b, #32                   ; espera 32 halts, aprox 0.1 seg
-    call wait
+    WAIT #32
     srl a                       ; desplaça patró: 88 -> 44 -> 22 -> 11 -> 8
     cp #8
     jr nz, _p02r11_loop_2
@@ -72,8 +97,7 @@ _p02r12_sub_loop2:
     and (hl)                    ; fica els bits del píxel a 0
     or c                        ; activa els bits del píxel en funció del color
     ld (hl), a                  ; actualitza el píxel
-    ld b, #32
-    call wait                   ; espera 32 halts
+    WAIT #32                    ; espera 32 halts
     srl c                       ; desplaça el color
     srl d                       ; desplaça la màscara
     ld a, d
