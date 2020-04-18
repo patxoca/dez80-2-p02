@@ -23,9 +23,9 @@ loop:
 ;;; - flag Z: val 1
 ;;;
 ;;; rationale:
-;;;   utilitzar una funció requereix 5 bytes per preparar el call, la
-;;;   macro requereix 5 bytes.
-;;;
+;;;   utilitzar una funció requereix 5 bytes només per preparar cada
+;;;   call (més 4 de la propia funció), la macro requereix 4 bytes.
+
     .macro WAIT, N
     ld b, N
     halt
