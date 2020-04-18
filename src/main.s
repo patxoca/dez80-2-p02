@@ -1,10 +1,8 @@
 
-    .area _DATA
-
     .area _CODE
 
 _main::
-    call p02r12
+    call p02r13
 loop:
    jr    loop
 
@@ -112,6 +110,89 @@ _p02r12_sub_loop2:
     ret
 
 ;;; ======================================================================
+;;; Part 2, repte 1.3:
+;;;
+;;; animar una cara
+
+;;; . fons (00), # groc (10), @ cian (01), - roig (11)
+;;;
+;;; 1: .######. -> 0111 0000  1110 0000 -> 70 E0
+;;; 2: .#@##@#. -> 0101 0010  1010 0100 -> 52 A4
+;;; 3: ######## -> 1111 0000  1111 0000 -> F0 F0
+;;; 4: ######## -> 1111 0000  1111 0000 -> F0 F0
+;;; 5: .##-###. -> 0111 0001  1110 0000 -> 71 E0
+;;; 6: .######. -> 0111 0000  1110 0000 -> 70 E0
+;;;
+;;; Animació dels llavis:
+;;;
+;;; fotograma 1:
+;;;
+;;; 4: ######## -> 1111 0000  1111 0000 -> F0 F0
+;;; 5: .##-###. -> 0111 0001  1110 0000 -> 71 E0
+;;;
+;;; fotograma 2:
+;;;
+;;; 5: .##--##. -> 0111 0001  1110 1000 -> 71 E8
+;;;
+;;; fotograma 3:
+;;;
+;;; 4: ##-##-## -> 1111 0010  1111 0100 -> F2 F4
+
+p02r13:
+    ld hl, #0xc000              ; HL adreça de vídeo
+    ld de, #_p02r13_sprite      ; DE adreça del sprite
+    ld b, #6                    ; B  nombre de files
+
+_p02r13_draw:                   ; pinta la cara completa
+    ld a, (de)
+    inc de
+    ld (hl), a                  ; pinta el primer píxel
+    inc l
+    ld a, (de)
+    inc de
+    ld (hl), a                  ; pinta el segon píxel
+    ld a, h
+    add #8
+    ld h, a
+    ld l, #0                    ; HL apunta al principi de la línia següent
+    djnz _p02r13_draw           ; si queden files (B) repetim
+
+    WAIT #64
+
+_p02r13_anim:                   ; bucle d'animació
+    ;; pinta el fotograma 2
+    ld hl, #0xe000
+    ld (hl), #0x71
+    inc l
+    ld (hl), #0xe8
+
+    WAIT #64
+
+    ;; pinta el fotograma 3
+    ld hl, #0xd800
+    ld (hl), #0xf2
+    inc l
+    ld (hl), #0xf4
+
+    WAIT #64
+
+    ;; pinta el fotograma 1 (restaura la imatge original)
+    ld hl, #0xd800
+    ld (hl), #0xf0
+    inc l
+    ld (hl), #0xf0
+    ld hl, #0xe000
+    ld (hl), #0x71
+    inc l
+    ld (hl), #0xe0
+
+    WAIT #64
+
+    ;; repeteix
+    jr _p02r13_anim
+    ret
+
+;;; ======================================================================
 ;;; funcions d'utilitat
 
 ;;; ----------------------------------------------------------------------
@@ -131,3 +212,13 @@ wait:
     halt
     djnz wait
     ret
+
+    .area _DATA
+
+_p02r13_sprite:
+    .db 0x70, 0xE0
+    .db 0x52, 0xA4
+    .db 0xF0, 0xF0
+    .db 0xF0, 0xF0
+    .db 0x71, 0xE0
+    .db 0x70, 0xE0
