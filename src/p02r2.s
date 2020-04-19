@@ -61,7 +61,7 @@ p02r21::
     ;; TODO: la documentació és frustrant, retroman crec que té un
 	;; vídeo sobre macros
 
-    .macro DIB_PUNTA addr
+    .macro P02R22_DIB_PUNTA addr
     ld hl, #addr
     ld (hl), #0x74
     foo .equ (>#addr + #8)
@@ -69,7 +69,7 @@ p02r21::
     ld (hl), #0xfc
     .endm
 
-    .macro DIB_BARRA addr
+    .macro P02R22_DIB_BARRA addr
     ld hl, #addr
     ld (hl), #0xf0
     foo .equ (>#addr + #8)
@@ -77,7 +77,7 @@ p02r21::
     ld (hl), #0xf0
     .endm
 
-    .macro ESBORRAR addr
+    .macro P02R22_ESBORRAR addr
     ld hl, #addr
     ld (hl), #0x00
     foo .equ (>#addr + #8)
@@ -92,23 +92,23 @@ p02r22::
     ld (hl), #0xfb
 
 _p02r22_loop:
-    DIB_PUNTA 0xc003
+    P02R22_DIB_PUNTA 0xc003
     WAIT #32
 
-    DIB_PUNTA 0xc002
-    DIB_BARRA 0xc003
+    P02R22_DIB_PUNTA 0xc002
+    P02R22_DIB_BARRA 0xc003
     WAIT #32
 
-    DIB_PUNTA 0xc001
-    DIB_BARRA 0xc002
+    P02R22_DIB_PUNTA 0xc001
+    P02R22_DIB_BARRA 0xc002
     WAIT #32
 
-    ESBORRAR 0xc001
-    DIB_PUNTA 0xc002
+    P02R22_ESBORRAR 0xc001
+    P02R22_DIB_PUNTA 0xc002
     WAIT #32
 
-    ESBORRAR 0xc002
-    DIB_PUNTA 0xc003
+    P02R22_ESBORRAR 0xc002
+    P02R22_DIB_PUNTA 0xc003
     WAIT #32
 
     jr nz, _p02r22_loop
