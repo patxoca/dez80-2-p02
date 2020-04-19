@@ -116,6 +116,58 @@ _p02r22_loop:
     ret
 
 ;;; ======================================================================
+;;; Part 2, repte 2.3:
+;;;
+;;; animar una pilota rebotant
+
+;;; .##. -> 0110 0110 -> 66
+;;; #@@# -> 1111 1001 -> F9
+;;; #@@# -> 1111 1001 -> F9
+;;; .##. -> 0110 0110 -> 66
+
+    .macro P02R23_DIB_BOLA addr
+    ld hl, #addr
+    ld (hl), #0x66
+    foo .equ (>#addr + #8)
+    ld h, #foo
+    ld (hl), #0xf9
+    foo .equ (>#addr + #16)
+    ld h, #foo
+    ld (hl), #0xf9
+    foo .equ (>#addr + #24)
+    ld h, #foo
+    ld (hl), #0x66
+    .endm
+
+    .macro P02R23_ESBORRAR addr
+    ld hl, #addr
+    ld (hl), #0
+    .endm
+
+p02r23::
+    P02R23_DIB_BOLA 0xc000
+    WAIT #48
+
+    P02R23_ESBORRAR 0xc000
+    P02R23_DIB_BOLA 0xc800
+    WAIT #48
+
+    P02R23_ESBORRAR 0xc800
+    P02R23_ESBORRAR 0xd000
+    P02R23_DIB_BOLA 0xd800
+    WAIT #48
+
+    P02R23_ESBORRAR 0xe800
+    P02R23_ESBORRAR 0xf000
+    P02R23_DIB_BOLA 0xc800
+    WAIT #48
+
+    P02R23_ESBORRAR 0xe000
+    jr p02r23
+
+    ret
+
+;;; ======================================================================
 ;;; data
 
     .area _DATA
