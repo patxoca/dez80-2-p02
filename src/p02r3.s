@@ -21,20 +21,29 @@
 
 p02r31::
     ld hl, #0xc000
-    ld (hl), #0xff
+    ld de, #terra
+    ld a, (de)
+    ld b, a                     ; B comptador de línies;
+    inc de
+_p02r31_loop:
+    ld a, (de)                  ; A píxels
+    inc de
+    ld (hl), a
     ld a, h
-    add #8
+    add a, #8
     ld h, a
-    ld (hl), #0xa5
-    add #8
-    ld h, a
-    ld (hl), #0x5a
-    add #8
-    ld h, a
-    ld (hl), #0xff
+    ld l, #0
+    djnz _p02r31_loop
+    ret
+
     ret
 
 ;;; ======================================================================
 ;;; data
 
     .area _DATA
+
+
+terra:
+    ;; comptador de linies + 1 byte de colors per linia
+    .db 4, 0xff, 0xa5, 0x5a, 0xff
