@@ -36,6 +36,32 @@ _p02r31_loop:
     djnz _p02r31_loop
     ret
 
+;;; ======================================================================
+;;; Part 2, repte 3.2:
+;;;
+;;; dibuixar el terra ocupant tot l'ample de la pantalla
+;;;
+
+p02r32::
+    ld de, #terra               ; DE punter al sprite
+    ld a, (de)
+    inc de
+    ld c, a                     ; C nombre de línies del sprite
+    ld hl, #0xc000              ; HL adreça de vídeo
+_p02r32_loop1:
+    ld a, (de)                  ; A bytes del sprite
+    inc de
+    ld b, #0x50                 ; B nombre de repeticions (dins la línia)
+_p02r32_loop2:
+    ld (hl), a                  ; emplena la fila amb A
+    inc l                       ; avança HL
+    djnz _p02r32_loop2
+    ld a, h                     ; mou HL al principi de la línia següent
+    add a, #8
+    ld h, a
+    ld l, #0
+    dec c                       ; decrementa el comptador de línies
+    jr nz, _p02r32_loop1
     ret
 
 ;;; ======================================================================
