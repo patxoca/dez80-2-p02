@@ -13,11 +13,6 @@
 ;;;
 ;;; dibuixar el terra
 ;;;
-;;; # roig (11), @ groc (10), % cyan (01), . blau (00)
-;;; #### -> 1111 1111 -> FF
-;;; @%@% -> 1010 0101 -> A5
-;;; %@%@ -> 0101 1010 -> 5A
-;;; #### -> 1111 1111 -> FF
 
 p02r31::
     ld hl, #0xc000
@@ -71,5 +66,12 @@ _p02r32_loop2:
 
 
 terra:
-    ;; comptador de linies + 1 byte de colors per linia
+    ;; nombre de linies + 1 byte de colors per linia
+    ;;
+    ;; # roig (11), @ groc (10), % cyan (01), . blau (00)
+    ;; #### -> 1111 1111 -> FF
+    ;; @%@% -> 1010 0101 -> A5
+    ;; %@%@ -> 0101 1010 -> 5A
+    ;; #### -> 1111 1111 -> FF
+    ;;
     .db 6, 0xff, 0xa5, 0x5a, 0xa5, 0x5a, 0xff
