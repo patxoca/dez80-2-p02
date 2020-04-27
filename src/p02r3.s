@@ -49,12 +49,10 @@ p02r32::
 ;;;
 
 p02r33::
-    ld de, #sostre1             ; DE punter al sprite
-    ld hl, #0xc000              ; HL adreça de vídeo
-    call dib_sprite8
+    call setup
 
-    ld de, #sostre2             ; DE punter al sprite
-    ld hl, #0xc050              ; HL adreça de vídeo
+    ld de, #sostre              ; DE punter al sprite
+    ld hl, #0xc000              ; HL adreça de vídeo
     call dib_sprite8
 
     ld de, #terra               ; DE punter al sprite
@@ -91,24 +89,59 @@ _dib_sprite8_loop1:
     ld a, (de)                  ; A bytes del sprite
     inc de
     ld b, #0x50                 ; B nombre de repeticions (dins la línia)
+    push hl
 _dib_sprite8_loop2:
     ld (hl), a                  ; emplena la fila amb A
     inc hl                      ; avança HL
     djnz _dib_sprite8_loop2
+    pop hl
 
-    ;; TODO: si no suposa un cost elevat mirar de generalitzar-ho per
-    ;; poder travesar els límits de les línies de caràcters
+    ;; TODO: açò sembla que gestiona correctament el canvi de fila,
+	;; encara que canviï de línia. Valorar alternatives:
+    ;;
+    ;; - sumar 0xc850 a HL (add HL, DE)
+    ;;
+    ;; Al valorar cal tindre en compte el cost per iteració i el cost
+	;; total (si una braca té poc cost la majoria de vegades però un cost
+	;; elevat una de cada N vs. un cost mig totes les iteracions).
 
-    ld a, l                     ; mou HL al principi de la línia següent
-    sub #0x50
-    ld l, a
     ld a, h
-    sbc a, #0                   ; ajusta H si la resta anterior dona negatiu
-    add a, #8
+    add a, #8                   ; passa a la fila següent
+    jp nc, _foo                 ; travessa el límit de línia?
+                                ; sí, cal ajustar HL sumant-li 0xc850
+	                            ; però ja hem sumat 0x08 a H
+    add a, #0xc0                ; només cal sumar 0xc0
     ld h, a
-
+    ld a, l                     ; i 0x50 a L
+    add a, #0x50
+    ld l, a
+    jp nc, _bar                 ; cal tindre en compte el carry i propagar-lo a H
+    inc h
+    jp _bar
+_foo:                           ; no travessa la línia
+    ld h, a                     ; H és vàlid
+_bar:
     dec c                       ; decrementa el comptador de línies
     jr nz, _dib_sprite8_loop1
+    ret
+
+;;; ----------------------------------------------------------------------
+;;; setup: configura el programa
+
+setup:
+    ;; desactiva les interrucions
+    ld  a, #0xc9                ; C9 == ret
+    di
+    ld (#0x38), a
+    ei
+
+    ;; configura el color del border
+    ;; http://www.cpcwiki.eu/index.php/Gate_Array#Controlling_the_Gate_Array
+	ld bc, #0x7F00              ; port del gate array
+	ld a, #0x10                 ; comanda seleccionar border (0b00001000)
+	out (c), a                  ; envia comanda
+	ld a, #0x40                 ; comanda seleccionar color (0b01000000)
+	out (c), a                  ; envia comanda
     ret
 
 ;;; ======================================================================
@@ -150,9 +183,7 @@ terra:
     ;; .... -> 0000 0000 -> 00
     ;; .... -> 0000 0000 -> 00
     ;;
-sostre1:
-    .db 8
-    .db 0xf0, 0x5a, 0xa5, 0x1e, 0x0a, 0x05, 0x08, 0x00
-sostre2:
-    .db 8
+sostre:
+    .db 16
+    .db 0xf0, 0x5a, 0xa5, 0x1e, 0x0a, 0x05, 0x08, 0x01
     .db 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
