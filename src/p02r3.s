@@ -43,7 +43,7 @@ p02r32::
     jp dib_sprite8
 
 ;;; ======================================================================
-;;; Part 2, repte 3.2:
+;;; Part 2, repte 3.3:
 ;;;
 ;;; dibuixar el terra ocupant tot l'ample de la pantalla
 ;;;
