@@ -6,6 +6,6 @@
     .area _CODE
 
 _main::
-    call p02r33
+    call p02r34
 loop:
    jr    loop
